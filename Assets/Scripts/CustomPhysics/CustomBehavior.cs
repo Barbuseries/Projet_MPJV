@@ -41,6 +41,12 @@ public class CustomBehavior : MonoBehaviour {
 		return result;
 	}
 
+	private Matrix4x4 _GetScalingMatrix(Vector3 axis, float k) {
+		Matrix4x4 result = new Matrix4x4();
+
+		return result;
+	}
+
 	private Vector3 _GetRotationAlongAxes(Matrix4x4 rotationMatrix) {
 		float m00 = rotationMatrix.m00;
 		float m10 = rotationMatrix.m10;
@@ -54,12 +60,11 @@ public class CustomBehavior : MonoBehaviour {
 
 		return result;
 	}
-	
-	public void Rotate(Vector3 axis, float angle) {
-		if (vertices.Length == 0) return;
-		
-		Matrix4x4 rotationMatrix = _GetRotationMatrix(axis, angle);
+
+	private void _Rotate(Matrix4x4 rotationMatrix) {
 		Vector3 angleRotation = _GetRotationAlongAxes(rotationMatrix);
+
+		Quaternion rotationQuaternion = Quaternion.Euler(angleRotation.x, angleRotation.y, angleRotation.z);
 
 		for (var i = 0; i < vertices.Length; ++i) {
 			GameObject vertex = vertices[i];
@@ -71,8 +76,24 @@ public class CustomBehavior : MonoBehaviour {
 			vertex.transform.position = new Vector3(result.x, result.y, result.z) + transform.position;
 
 			// Converted to quaternion to avoid Gimbal Lock on x-axis.
-			vertex.transform.rotation *= Quaternion.Euler(angleRotation.x, angleRotation.y, angleRotation.z);
+			vertex.transform.rotation *= rotationQuaternion;
 		}
+	}
+	
+	public void Rotate(Vector3 axis, float angle) {
+		if (vertices.Length == 0) return;
+		
+		// FIXME: This can just use a quaternion.
+		Matrix4x4 rotationMatrix = _GetRotationMatrix(axis, angle);
+		_Rotate(rotationMatrix);
+	}
+
+	public void Rotate(float x, float y, float z) {
+		Matrix4x4 fullRotation = (_GetRotationMatrix(new Vector3(1, 0, 0), x) *
+								  _GetRotationMatrix(new Vector3(0, 1, 0), y) *
+								  _GetRotationMatrix(new Vector3(0, 0, 1), z));
+
+		_Rotate(fullRotation);
 	}
 
 	public void Translate(Vector3 translation, Space referential) {
@@ -86,5 +107,15 @@ public class CustomBehavior : MonoBehaviour {
 			
 			transform.position += rotation * translation;
 		}
+	}
+
+	public void Scale(Vector3 axis, float k) {
+		
+	}
+
+	public void Scale(float x, float y, float z) {
+		Matrix4x4 fullScaling = (_GetScalingMatrix(new Vector3(1, 0, 0), x) *
+								 _GetScalingMatrix(new Vector3(0, 1, 0), y) *
+								 _GetScalingMatrix(new Vector3(0, 0, 1), z));
 	}
 }
