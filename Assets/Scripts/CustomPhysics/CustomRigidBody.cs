@@ -49,14 +49,21 @@ public class CustomRigidBody : MonoBehaviour {
 	private static float _damping = 0.90f;
 	
 	void Start () {
+		// Used to move and rotate the parent entity
 		_behavior = GetComponent<CustomBehavior>();
 
+		// TODO?: We do not currently store the entity's scale in CustomBehavior. 
 		shape = new Sphere(gameObject.transform.localScale.x, mass);
+		// shape = new Cube(gameObject.transform.localScale.x,
+		// 				 gameObject.transform.localScale.y,
+		// 				 gameObject.transform.localScale.z,
+		// 				 mass);
 
 		Debug.Log(shape.inertia);
 	}
 	
 	void FixedUpdate () {
+		// Body is immobile
 		if (_inverseMass == 0) return;
 
 		// Linear

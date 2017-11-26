@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// TODO: This can be used to make collisions.
 public abstract class Shape {
 	protected Matrix4x4 _inertia;
 	
@@ -45,5 +46,60 @@ public class Sphere : Shape {
 		_inertia.m00 = value;
 		_inertia.m11 = value;
 		_inertia.m22 = value;
+	}
+}
+
+public class Cube : Shape {
+	private float _width;
+	private float _height;
+	private float _depth;
+
+	public float width {
+		get {return _width;}
+		set {
+			_width = value;
+			ComputeInertia();
+		}
+	}
+
+	public float height {
+		get {return _height;}
+		set {
+			_height = value;
+			ComputeInertia();
+		}
+	}
+
+	public float depth {
+		get {return _depth;}
+		set {
+			_depth = value;
+			ComputeInertia();
+		}
+	}
+
+	public void SetDimensions(float width, float height, float depth) {
+		_width = width;
+		_height = height;
+		_depth = depth;
+
+		ComputeInertia();
+	}
+
+	public Cube(float width, float height, float depth, float mass = 1.0f) {
+		_mass = mass;
+		SetDimensions(width, height, depth);
+	}
+	
+	public override void ComputeInertia() {
+		float value = 1.0f/12.0f * mass;
+		
+		float ww = width * width;
+		float hh = height * height;
+		float dd = depth * depth;
+		
+		_inertia.m00 = value * (hh + dd);
+		_inertia.m11 = value * (ww + dd);
+		_inertia.m22 = value * (ww + hh);
 	}
 }
