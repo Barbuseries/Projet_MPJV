@@ -30,6 +30,27 @@ public class CustomBehavior : MonoBehaviour {
 	
 	[SerializeField] private GameObject[] vertices;
 
+	// Draw lines between vertices.
+	private LineRenderer line;
+
+	void Start() {
+		line = gameObject.AddComponent<LineRenderer>();
+
+		line.SetWidth(0.05f, 0.05f);
+		line.SetVertexCount(vertices.Length + 1);
+	}
+
+	void Update() {
+		if (vertices.Length < 2) return;
+
+		var i = 0;
+		for (; i < vertices.Length; ++i) {
+			line.SetPosition(i, vertices[i].transform.position);
+		}
+
+		line.SetPosition(i, vertices[0].transform.position);
+	}
+
 	private Matrix4x4 _GetRotationMatrix(Vector3 axis, float angle) {
 		angle *= Mathf.Deg2Rad;
 		axis.Normalize();
@@ -159,7 +180,7 @@ public class CustomBehavior : MonoBehaviour {
 		_Rotate(fullRotation);
 	}
 
-	public void Translate(Vector3 translation, Space referential) {
+	public void Translate(Vector3 translation, Space referential = Space.World) {
 		if (vertices.Length == 0) return;
 
 		if (referential == Space.World) {
