@@ -18,7 +18,8 @@ public class Toto : MonoBehaviour {
 	
 	void Update () {
 		if (Input.GetMouseButtonDown(0)) {
-			test.GetComponent<CustomRigidBody>().AddForce(new Vector3(0, 250.0f, 0.0f));
+			test.GetComponent<CustomRigidBody>().AddForce(new Vector3(0.0f, 0.0f, 100.0f),
+														  new Vector3(5.0f, 5.0f, 0));
 		}
 		// test.GetComponent<CustomRigidBody>().
 		// Vector3 axis = new Vector3(1, 0, 0);
