@@ -46,7 +46,10 @@ public class CustomRigidBody : MonoBehaviour {
 	private CustomBehavior _behavior;
 
 	private static Vector3 _gravity = new Vector3(0, -9.8f, 0);
-	private static float _damping = 0.90f;
+
+	// TODO: Replace by (and implement) drag
+	private static float _linearDamping = 0.90f;
+	private static float _angularDamping = 0.90f;
 	
 	void Start () {
 		// Used to move and rotate the parent entity
@@ -66,29 +69,28 @@ public class CustomRigidBody : MonoBehaviour {
 		// Body is immobile
 		if (_inverseMass == 0) return;
 
-		// Linear
-		Vector3 acceleration = _forceAccumulator / GetMass();
+		float linearDamping = Mathf.Pow(_linearDamping, Time.deltaTime);
+		float angularDamping = Mathf.Pow(_angularDamping, Time.deltaTime);
 
+		// Linear
+		Vector3 acceleration = _forceAccumulator * _inverseMass;
 		if (useGravity) acceleration += _gravity * gravityFactor;
 		
-		velocity += 0.5f * acceleration * Time.deltaTime;
-		Vector3 deltaPos = velocity * Time.deltaTime;
+		velocity += acceleration * Time.deltaTime;
+		velocity *= linearDamping;
 		
+		Vector3 deltaPos = velocity * Time.deltaTime;
 		_behavior.Translate(deltaPos, Space.World);
  
-		float damp = Mathf.Pow(_damping, Time.deltaTime); 
-		velocity *= damp;
-
 
 		// Angular
 		Vector3 angularAcceleration = shape.inertia.inverse.MultiplyPoint3x4(_torque);
 				
-		angularVelocity += 0.5f * angularAcceleration * Time.deltaTime;
+		angularVelocity += angularAcceleration * Time.deltaTime;
+		angularVelocity *= angularDamping;
+		
 		Vector3 deltaAngle = angularVelocity * Time.deltaTime;
 		_behavior.Rotate(deltaAngle.x, deltaAngle.y, deltaAngle.z);
-
-		angularVelocity *= damp;
-		
 		
 		_forceAccumulator = Vector3.zero;
 		_torque = Vector3.zero;
