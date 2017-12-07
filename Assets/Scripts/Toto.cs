@@ -28,7 +28,7 @@ public class Toto : MonoBehaviour {
 		
 		// reference.transform.Rotate(axis, angle);
 		
-		test.Translate(new Vector3(0, 0, 1) * Time.deltaTime);
+		// test.Translate(new Vector3(0, 0, 1) * Time.deltaTime);
 		
 		// Vector3 translation = Vector3.up * Time.deltaTime;
 

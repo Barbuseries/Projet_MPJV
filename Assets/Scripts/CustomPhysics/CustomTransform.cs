@@ -54,11 +54,56 @@ public class CustomTransform : MonoBehaviour {
 		gameObject.transform.localScale = scale;
 	}
 
+	private Matrix4x4 _GetXRotationMatrix(float angle) {
+		angle *= Mathf.Deg2Rad;
+
+		float ca = Mathf.Cos(angle);
+		float sa = Mathf.Sin(angle);
+		
+		Vector4 column0 = new Vector4(1, 0, 0, 0);
+		Vector4 column1 = new Vector4(0, ca, sa, 0);
+		Vector4 column2 = new Vector4(0, -sa, ca, 0);
+		Vector4 column3 = new Vector4(0, 0, 0, 1);
+
+		Matrix4x4 result = new Matrix4x4(column0, column1, column2, column3);
+		return result;
+	}
+
+	private Matrix4x4 _GetYRotationMatrix(float angle) {
+		angle *= Mathf.Deg2Rad;
+
+		float ca = Mathf.Cos(angle);
+		float sa = Mathf.Sin(angle);
+		
+		Vector4 column0 = new Vector4(ca, 0, sa, 0);
+		Vector4 column1 = new Vector4(0, 1, 0, 0);
+		Vector4 column2 = new Vector4(-sa, 0, ca, 0);
+		Vector4 column3 = new Vector4(0, 0, 0, 1);
+
+		Matrix4x4 result = new Matrix4x4(column0, column1, column2, column3);
+		return result;
+	}
+
+	private Matrix4x4 _GetZRotationMatrix(float angle) {
+		angle *= Mathf.Deg2Rad;
+
+		float ca = Mathf.Cos(angle);
+		float sa = Mathf.Sin(angle);
+		
+		Vector4 column0 = new Vector4(ca, -sa, 0, 0);
+		Vector4 column1 = new Vector4(sa, ca, 0, 0);
+		Vector4 column2 = new Vector4(0, 0, 1, 0);
+		Vector4 column3 = new Vector4(0, 0, 0, 1);
+
+		Matrix4x4 result = new Matrix4x4(column0, column1, column2, column3);
+		return result;
+	}
+
 	private Matrix4x4 _GetRotationMatrix(Vector3 axis, float angle) {
 		angle *= Mathf.Deg2Rad;
 		axis.Normalize();
 
-		// // https://en.wikipedia.org/wiki/Rotation_matrix
+		// https://en.wikipedia.org/wiki/Rotation_matrix
 		float ca = Mathf.Cos(angle);
 		float sa = Mathf.Sin(angle);
 		float oneMCa = 1 - ca;
@@ -175,16 +220,14 @@ public class CustomTransform : MonoBehaviour {
 	}
 
 	public void Rotate(float x, float y, float z) {
-		Matrix4x4 fullRotation = (_GetRotationMatrix(new Vector3(1, 0, 0), x) *
-								  _GetRotationMatrix(new Vector3(0, 1, 0), y) *
-								  _GetRotationMatrix(new Vector3(0, 0, 1), z));
+		Matrix4x4 fullRotation = (_GetXRotationMatrix(x) *
+								  _GetYRotationMatrix(y) *
+								  _GetZRotationMatrix(z));
 
 		_Rotate(fullRotation);
 	}
 
 	public void Translate(Vector3 translation, Space referential = Space.World) {
-		if (vertices.Length == 0) return;
-
 		if (referential == Space.World) {
 			position += translation;
 		}
