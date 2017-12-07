@@ -37,18 +37,25 @@ public class CustomBehavior : MonoBehaviour {
 		line = gameObject.AddComponent<LineRenderer>();
 
 		line.SetWidth(0.05f, 0.05f);
-		line.SetVertexCount(vertices.Length + 1);
+		line.SetVertexCount(vertices.Length * ((vertices.Length * 2 - 1) - 1));
 	}
 
 	void Update() {
 		if (vertices.Length < 2) return;
 
-		var i = 0;
-		for (; i < vertices.Length; ++i) {
-			line.SetPosition(i, vertices[i].transform.position);
-		}
 
-		line.SetPosition(i, vertices[0].transform.position);
+		var count = 0;
+		for (var i = 0; i < vertices.Length; ++i) {
+			for (var j = 0; j < vertices.Length; ++j) {
+				if (i == j) continue;
+
+				line.SetPosition(count, vertices[i].transform.position);
+				++count;
+				
+				line.SetPosition(count, vertices[j].transform.position);
+				++count;
+			}
+		}
 	}
 
 	private Matrix4x4 _GetRotationMatrix(Vector3 axis, float angle) {

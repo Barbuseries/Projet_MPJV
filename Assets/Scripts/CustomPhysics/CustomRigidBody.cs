@@ -56,13 +56,11 @@ public class CustomRigidBody : MonoBehaviour {
 		_behavior = GetComponent<CustomBehavior>();
 
 		// TODO?: We do not currently store the entity's scale in CustomBehavior. 
-		shape = new Sphere(gameObject.transform.localScale.x, mass);
-		// shape = new Cube(gameObject.transform.localScale.x,
-		// 				 gameObject.transform.localScale.y,
-		// 				 gameObject.transform.localScale.z,
-		// 				 mass);
-
-		Debug.Log(shape.inertia);
+		// shape = new Sphere(gameObject.transform.localScale.x, mass);
+		shape = new Cube(gameObject.transform.localScale.x * 2,
+						 gameObject.transform.localScale.y * 2,
+						 gameObject.transform.localScale.z * 2,
+						 mass);
 	}
 	
 	void FixedUpdate () {
