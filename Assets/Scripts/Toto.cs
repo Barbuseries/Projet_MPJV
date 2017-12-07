@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Toto : MonoBehaviour {
-	[SerializeField] private CustomBehavior test;
+	[SerializeField] private CustomTransform test;
 	[SerializeField] private GameObject reference;
 
 	void Start() {
@@ -27,9 +27,8 @@ public class Toto : MonoBehaviour {
 		// test.Rotate(axis, angle);
 		
 		// reference.transform.Rotate(axis, angle);
-		// test.WorldRotate(axis, angle);
 		
-		// test.Translate(new Vector3(0, 0, 1) * Time.deltaTime, Space.Self);
+		test.Translate(new Vector3(0, 0, 1) * Time.deltaTime);
 		
 		// Vector3 translation = Vector3.up * Time.deltaTime;
 

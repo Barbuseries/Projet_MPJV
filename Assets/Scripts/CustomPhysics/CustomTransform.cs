@@ -2,33 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[AddComponentMenu("CustomPhysics/Custom Behavior")]
-public class CustomBehavior : MonoBehaviour {
-	// FIXME: Need to store position, rotation, scale (and rename
-	//        script as CustomTransform or something).
-	
-	// NOTE(rotation): We currently do not store the object's rotation
-	//                 (nor its position).
-	//
-	//                 We do not change the object's rotation directly
-	//                 (via transform.rotation), because that would
-	//                 make our own rotation methods useless.
-	//
-	//                 Our temporary fix is to use the rotation of the
-	//                 object's vertices (that we manually modify) to
-	//                 indicate the rotation of the object as a whole.
-	//
-	//                 A better alternative would be to actually store
-	//                 its position and its rotation (different from
-	//                 transform.position/rotation). But by doing so,
-	//                 we would need to add a Start, Update, ...
-	//                 method to save (from transform) and copy
-	//                 back (to transform) some changes (save all, but
-	//                 only overwrite the position (as this is the
-	//                 only thing that vertices do not only have as
-	//                 'local')).
-	
+[AddComponentMenu("CustomPhysics/Custom Transform")]
+// FIXME: Currently, most transform operations (rotation, scale, ...)
+// can not be undone, because they directly modify the
+// vertices.transform.position.
+// A solution would be to give a Vertex object (which would store the
+// vertex's 'canonical' position, and not its actual position after
+// every operation has be applied) to every vertex.
+public class CustomTransform : MonoBehaviour {
 	[SerializeField] private GameObject[] vertices;
+
+	// Overwrite gameObject.transform.XXX
+	public Vector3 position {get; private set;} // FIXME (see FIXME at top): there is no way to set position to a particular vector. (aside from translating the delta between the desired position and the old one)
+	public Vector3 scale {get; private set;} // FIXME (see FIXME at top): there is no way to set scale to a particular vector. (aside from dividing the new scale by the old scale and using it as a scaling factor (which breaks if the old scale is 0))
+	public Quaternion rotation {get; private set;} // FIXME (see FIXME at top): there is no way to set rotation to a particular vector. (aside from undoing the original rotation and _then_ apply the new one)
 
 	// Draw lines between vertices.
 	private LineRenderer line;
@@ -38,11 +25,14 @@ public class CustomBehavior : MonoBehaviour {
 
 		line.SetWidth(0.05f, 0.05f);
 		line.SetVertexCount(vertices.Length * ((vertices.Length * 2 - 1) - 1));
+
+		position = gameObject.transform.position;
+		rotation = gameObject.transform.rotation;
+		scale = gameObject.transform.localScale;
 	}
 
 	void Update() {
 		if (vertices.Length < 2) return;
-
 
 		var count = 0;
 		for (var i = 0; i < vertices.Length; ++i) {
@@ -56,6 +46,12 @@ public class CustomBehavior : MonoBehaviour {
 				++count;
 			}
 		}
+	}
+
+	void LateUpdate() {
+		gameObject.transform.position = position;
+		gameObject.transform.rotation = rotation;
+		gameObject.transform.localScale = scale;
 	}
 
 	private Matrix4x4 _GetRotationMatrix(Vector3 axis, float angle) {
@@ -138,38 +134,37 @@ public class CustomBehavior : MonoBehaviour {
 		Quaternion rotationQuaternion = Quaternion.Euler(angleRotation.x, angleRotation.y, angleRotation.z);
 
 		foreach (GameObject vertex in vertices) {
-			Vector3 relativePos = vertex.transform.position - transform.position;
+			Vector3 relativePos = vertex.transform.position - position;
 			
 			Vector4 relativePos4D = new Vector4(relativePos.x, relativePos.y, relativePos.z, 1);
 			Vector4 result = rotationMatrix * relativePos4D;
 		
-			vertex.transform.position = new Vector3(result.x, result.y, result.z) + transform.position;
+			vertex.transform.position = new Vector3(result.x, result.y, result.z) + position;
 
 			// Converted to quaternion to avoid Gimbal Lock on x-axis.
 			// NOTE: This is mainly done to be able to see the vertex' referential move.
-			//       This is also used to determine the object rotation.
-			//       (See NOTE about rotation)
 			vertex.transform.rotation *= rotationQuaternion;
 		}
+
+		rotation *= rotationQuaternion;
 	}
 
-	// FIXME: The scale need to be stored somewhere (and position must
-	//        not be modified).
-	//        Otherwhise, there is not way to set the scale back to
-	//        (1, 1, 1).
 	private void _Scale(Matrix4x4 scalingMatrix) {
-		Debug.Log(scalingMatrix);
-		
 		foreach (GameObject vertex in vertices) {
-			Vector3 relativePos = vertex.transform.position - transform.position;
+			Vector3 relativePos = vertex.transform.position - position;
 			
 			Vector4 relativePos4D = new Vector4(relativePos.x, relativePos.y, relativePos.z, 1);
 			Vector4 result = scalingMatrix * relativePos4D;
 		
-			vertex.transform.position = new Vector3(result.x, result.y, result.z) + transform.position;
+			vertex.transform.position = new Vector3(result.x, result.y, result.z) + position;
 		}
+
+		scale = scalingMatrix.MultiplyVector(scale);
 	}
+
+
 	
+// Public methods
 	public void Rotate(Vector3 axis, float angle) {
 		if (vertices.Length == 0) return;
 		
@@ -191,12 +186,10 @@ public class CustomBehavior : MonoBehaviour {
 		if (vertices.Length == 0) return;
 
 		if (referential == Space.World) {
-			transform.position += translation;
+			position += translation;
 		}
 		else {
-			Quaternion rotation = vertices[0].transform.rotation;
-			
-			transform.position += rotation * translation;
+			position += rotation * translation;
 		}
 	}
 

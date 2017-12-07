@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("CustomPhysics/Custom RigidBody")]
-[RequireComponent(typeof(CustomBehavior))]
+[RequireComponent(typeof(CustomTransform))]
 public class CustomRigidBody : MonoBehaviour {
 	[HideInInspector]
 	public Vector3 velocity;
@@ -43,7 +43,7 @@ public class CustomRigidBody : MonoBehaviour {
 
 	private Vector3 _torque;
 	
-	private CustomBehavior _behavior;
+	private CustomTransform _customTransform;
 
 	private static Vector3 _gravity = new Vector3(0, -9.8f, 0);
 
@@ -53,13 +53,12 @@ public class CustomRigidBody : MonoBehaviour {
 	
 	void Start () {
 		// Used to move and rotate the parent entity
-		_behavior = GetComponent<CustomBehavior>();
+		_customTransform = GetComponent<CustomTransform>();
 
-		// TODO?: We do not currently store the entity's scale in CustomBehavior. 
-		// shape = new Sphere(gameObject.transform.localScale.x, mass);
-		shape = new Cube(gameObject.transform.localScale.x * 2,
-						 gameObject.transform.localScale.y * 2,
-						 gameObject.transform.localScale.z * 2,
+		// shape = new Sphere(_customTransform.scale.x, mass);
+		shape = new Cube(_customTransform.scale.x * 2,
+						 _customTransform.scale.y * 2,
+						 _customTransform.scale.z * 2,
 						 mass);
 	}
 	
@@ -78,7 +77,7 @@ public class CustomRigidBody : MonoBehaviour {
 		velocity *= linearDamping;
 		
 		Vector3 deltaPos = velocity * Time.deltaTime;
-		_behavior.Translate(deltaPos, Space.World);
+		_customTransform.Translate(deltaPos, Space.World);
  
 
 		// Angular
@@ -88,7 +87,7 @@ public class CustomRigidBody : MonoBehaviour {
 		angularVelocity *= angularDamping;
 		
 		Vector3 deltaAngle = angularVelocity * Time.deltaTime;
-		_behavior.Rotate(deltaAngle.x, deltaAngle.y, deltaAngle.z);
+		_customTransform.Rotate(deltaAngle.x, deltaAngle.y, deltaAngle.z);
 		
 		_forceAccumulator = Vector3.zero;
 		_torque = Vector3.zero;
