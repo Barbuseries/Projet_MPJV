@@ -55,11 +55,24 @@ public class CustomRigidBody : MonoBehaviour {
 		// Used to move and rotate the parent entity
 		_customTransform = GetComponent<CustomTransform>();
 
-		// shape = new Sphere(_customTransform.scale.x, mass);
-		shape = new Cube(_customTransform.scale.x * 2,
-						 _customTransform.scale.y * 2,
-						 _customTransform.scale.z * 2,
-						 mass);
+		// If a custom primitive is given, try to find the closest
+		// rigidbody.
+		var primitive = gameObject.GetComponent<CustomPrimitive>();
+		if (primitive == null) return;
+		
+		// Yep
+		if (primitive is CustomSphere) {
+			shape = new Ellipsoid(_customTransform.scale.x,
+								  _customTransform.scale.y,
+								  _customTransform.scale.z,
+								  mass);
+		}
+		else { // Defaults to a cube, because why not?
+			shape = new Cube(_customTransform.scale.x * 2,
+							 _customTransform.scale.y * 2,
+							 _customTransform.scale.z * 2,
+							 mass);
+		}
 	}
 	
 	void FixedUpdate () {

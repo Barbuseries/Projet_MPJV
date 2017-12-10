@@ -2,102 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// NOTE: This is meant to be an equivalent of the Transform of a
+// GameObject.
 [AddComponentMenu("CustomPhysics/Custom Transform")]
 public class CustomTransform : MonoBehaviour {
-	[SerializeField] private GameObject[] vertices;
-
-	public float vertexSize = 0.2f;
-	
 	// Overwrite gameObject.transform.XXX
+	// NOTE: This uses {get; set;} to mimic the behaviour of Unity
+	// (e,g: not being able to modify position.X directly)
 	public Vector3 position {get; set;}
 	public Vector3 scale {get; set;}
 	public Quaternion rotation {get; set;}
-	
-	private Vector3[] _vertices;
-	private int _vertexCount;
-
-	// Draw lines between vertices.
-	private LineRenderer line;
 
 	void Awake() {
-		position = Vector3.zero;
-		scale = Vector3.one;
-		rotation = Quaternion.identity;
+		position = gameObject.transform.position;
+		rotation = gameObject.transform.rotation;
+		scale = gameObject.transform.localScale;
 	}
 	
-	void Start() {
-		line = gameObject.AddComponent<LineRenderer>();
-
-		line.SetWidth(0.05f, 0.05f);
-		line.SetVertexCount(vertices.Length * ((vertices.Length * 2 - 1) - 1));
-
-		// NOTE: Just in case we set those values in a Start() method.
-		if (position == Vector3.zero) {
-			position = gameObject.transform.position;
-		}
-		if (rotation == Quaternion.identity) {
-			rotation = gameObject.transform.rotation;
-		}
-		if (scale == Vector3.zero) {
-			scale = gameObject.transform.localScale;
-		}
-
-		_vertexCount = vertices.Length;
-		
-		_vertices = new Vector3[_vertexCount];
-		for (int i = 0; i < _vertexCount; ++i) {
-			_vertices[i] = vertices[i].transform.position;
-		}
-	}
-
-	void Update() {
-		if (vertices.Length != _vertexCount) {
-			Debug.LogAssertion("The number of vertices of this shape changed!");
-			return;
-		}
-		
-		if (vertices.Length >= 2) {
-			var count = 0;
-			for (var i = 0; i < vertices.Length; ++i) {
-				for (var j = 0; j < vertices.Length; ++j) {
-					if (i == j) continue;
-
-					line.SetPosition(count, vertices[i].transform.position);
-					++count;
-				
-					line.SetPosition(count, vertices[j].transform.position);
-					++count;
-				}
-			}
-		}
-
-		Vector3 axis;
-		float angle;
-		rotation.ToAngleAxis(out angle, out axis);
-		
-		Matrix4x4 vertexTransform = _GetScalingMatrix(scale.x, scale.y, scale.z) * _GetRotationMatrix(axis, angle);
-		for (int i = 0; i < _vertexCount; ++i) {
-			vertices[i].transform.position = vertexTransform.MultiplyVector(_vertices[i]) + position;
-
-			// NOTE: objectScale = parentScale * localScale
-			vertices[i].transform.localScale = vertexSize * _invertedScale();
-		}
-	}
-
 	void LateUpdate() {
 		gameObject.transform.position = position;
 		gameObject.transform.rotation = rotation;
 		gameObject.transform.localScale = scale;
-	}
-
-	private Vector3 _invertedScale() {
-		var result = new Vector3();
-
-		result.x = (scale.x == 0) ? 0 : 1 / scale.x;
-		result.y = (scale.y == 0) ? 0 : 1 / scale.y;
-		result.z = (scale.z == 0) ? 0 : 1 / scale.z;
-
-		return result;
 	}
 
 	private Matrix4x4 _GetXRotationMatrix(float angle) {
@@ -294,5 +219,20 @@ public class CustomTransform : MonoBehaviour {
 
 	public void Project(Vector3 normal) {
 		Scale(normal, 0);
+	}
+
+	// Return a transformation matrix corresponding to the current
+	// rotation and scale.
+	// (IMPORTANT: This does not take into account the position, hence
+	// the 'Relative' part)
+	public Matrix4x4 RelativeTransformMatrix() {
+		Vector3 axis;
+		float angle;
+		rotation.ToAngleAxis(out angle, out axis);
+
+		Matrix4x4 result = (_GetRotationMatrix(axis, angle) *
+							_GetScalingMatrix(scale.x, scale.y, scale.z));
+
+		return result;
 	}
 }
