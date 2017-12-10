@@ -9,7 +9,6 @@ public class Toto : MonoBehaviour {
 	void Start() {
 		Vector3 axis = new Vector3(1, 0, 0);
 		
-		
 		// float angle = 90;
 		// test.Rotate(angle, angle, 0);
 
@@ -21,7 +20,6 @@ public class Toto : MonoBehaviour {
 			test.GetComponent<CustomRigidBody>().AddForce(new Vector3(0.0f, 0.0f, 100.0f),
 														  new Vector3(5.0f, 5.0f, 0));
 		}
-		// test.GetComponent<CustomRigidBody>().
 		// Vector3 axis = new Vector3(1, 0, 0);
 		// float angle = 90 * Time.deltaTime;
 		// test.Rotate(axis, angle);
