@@ -181,7 +181,6 @@ public class CustomTransform : MonoBehaviour {
 		// NOTE: This is equivalent to Quaternion.AxisAngle(axis, angle)
 		Quaternion rotationQuaternion = new Quaternion(axis.x, axis.y, axis.z, ca);
 		rotation *= rotationQuaternion;
-		Debug.Log(rotation);
 	}
 
 	public void Rotate(float x, float y, float z) {
