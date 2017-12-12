@@ -207,7 +207,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 146120481}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ef786661aa78544e9b589bdf6159498, type: 3}
   m_Name: 
@@ -270,6 +270,18 @@ GameObject:
   m_PrefabParentObject: {fileID: 1427002687804550, guid: 02a832e41175ae74bb6c6378ca653fbe,
     type: 2}
   m_PrefabInternal: {fileID: 1303974176}
+--- !u!114 &1098075262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1098075258}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b687c08e324c13b41800557a2312996a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  self: {fileID: 1098075258}
 --- !u!1 &1267575341 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1427002687804550, guid: 02a832e41175ae74bb6c6378ca653fbe,
@@ -289,6 +301,18 @@ MonoBehaviour:
   connectedBody: {fileID: 1098075258}
   self: {fileID: 1267575341}
   spring: 5
+--- !u!114 &1267575347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1267575341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b687c08e324c13b41800557a2312996a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  self: {fileID: 1267575341}
 --- !u!1001 &1303974176
 Prefab:
   m_ObjectHideFlags: 0
