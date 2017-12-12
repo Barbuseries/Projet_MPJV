@@ -19,7 +19,7 @@ public class CustomRigidBody : MonoBehaviour {
 	public float mass {
 		get
 		{
-			return _mass;
+			return GetMass();
 		}
 		set
 		{
@@ -137,6 +137,6 @@ public class CustomRigidBody : MonoBehaviour {
 
 	public float GetMass() {
 		if (_inverseMass == 0) return float.MaxValue;
-		return mass;
+		return _mass;
 	}
 }
