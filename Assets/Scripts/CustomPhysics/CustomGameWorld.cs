@@ -8,7 +8,19 @@ public class CustomGameWorld : MonoBehaviour {
 
 
 	public void Start(){
-		_colliderList = gameObject.GetComponentsInChildren<CustomCollider> ();
+		FetchAllColliders();
+	}
+
+	public void Update(){
+		FetchAllColliders();
+	}
+
+	public CustomCollider[] getColliderList(){
+		return _colliderList;
+	}
+
+	private void FetchAllColliders() {
+		_colliderList = gameObject.GetComponentsInChildren<CustomCollider>();
 		int id = 0;
 		foreach (CustomCollider currentCollider in _colliderList) {
 			//set an id for the collider
@@ -17,14 +29,4 @@ public class CustomGameWorld : MonoBehaviour {
 			id += 1;
 		}
 	}
-
-	public void Update(){
-
-	}
-
-	public CustomCollider[] getColliderList(){
-		return _colliderList;
-	}
-
-
 }
