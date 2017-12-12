@@ -10,6 +10,8 @@ public class CustomRigidBody : MonoBehaviour {
 	[HideInInspector]
 	public Vector3 angularVelocity;
 
+	// FIXME: _inverseMass is not set if
+	// we modify the mass from the editor while running.
 	[SerializeField] // NOTE/@HACK: [...] => This is used to have access to
 					 // a field in the editor.
 	private float _mass = 1.0f;
@@ -21,15 +23,7 @@ public class CustomRigidBody : MonoBehaviour {
 		}
 		set
 		{
-			if (value <= 0) {
-				Debug.LogError("Set mass: mass must be > 0.");
-				return;
-			}
-
-			_mass = value;
-			_inverseMass = 1.0f / value;
-
-			shape.mass = _mass;
+			_SetMass(value);
 		}
 	}
 	
@@ -50,6 +44,10 @@ public class CustomRigidBody : MonoBehaviour {
 	// TODO: Replace by (and implement) drag
 	private static float _linearDamping = 0.90f;
 	private static float _angularDamping = 0.90f;
+
+	void Awake() {
+		_SetMass(_mass);
+	}
 	
 	void Start () {
 		// Used to move and rotate the parent entity
@@ -104,6 +102,20 @@ public class CustomRigidBody : MonoBehaviour {
 		
 		_forceAccumulator = Vector3.zero;
 		_torque = Vector3.zero;
+	}
+
+	private void _SetMass(float mass) {
+		if (mass <= 0) {
+			Debug.LogError("Set mass: mass must be > 0.");
+			return;
+		}
+
+		_mass = mass;
+		_inverseMass = 1.0f / mass;
+
+		if (shape != null) {
+			shape.mass = _mass;
+		}
 	}
 
 	public void AddForce(Vector3 force) {
