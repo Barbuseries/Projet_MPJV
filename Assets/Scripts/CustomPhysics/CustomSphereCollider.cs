@@ -6,7 +6,10 @@ using UnityEngine;
 [RequireComponent(typeof(CustomRigidBody))]
 public class CustomSphereCollider : CustomCollider  {
 
-	public float radius;
+	public float radius = 0.5f; // TODO: Maybe find a way to set this
+								// to the scale (directly when it is
+								// added in the editor, not at start
+								// or awake)
 	private Vector3 position;
 
 	public void FixedUpdate(){

@@ -55,8 +55,6 @@ public abstract class CustomCollider : MonoBehaviour{
 		float invM1 = 1 / r1.mass;
 		float invM2 = 1 / r2.mass;
 
-		// FIXME: This fails to work if both object have the same
-		// velocity (restauration = 0).
 		Vector3 contactNormal = selfTransform.position - r2.GetComponent<CustomTransform>().position;
 		contactNormal.Normalize();
 
