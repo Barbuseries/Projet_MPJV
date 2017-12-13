@@ -225,11 +225,7 @@ public class CustomTransform : MonoBehaviour {
 	// (IMPORTANT: This does not take into account the position, hence
 	// the 'Relative' part)
 	public Matrix4x4 RelativeTransformMatrix() {
-		Vector3 axis;
-		float angle;
-		rotation.ToAngleAxis(out angle, out axis);
-
-		Matrix4x4 result = (_GetRotationMatrix(axis, angle) *
+		Matrix4x4 result = (GetRotationMatrix() *
 							_GetScalingMatrix(scale.x, scale.y, scale.z));
 
 		return result;
@@ -249,6 +245,16 @@ public class CustomTransform : MonoBehaviour {
 
 	public Vector3 Transform(Vector3 v) {
 		Vector3 result = (rotation * v) + position;
+		return result;
+	}
+
+	public Matrix4x4 GetRotationMatrix() {
+		Vector3 axis;
+		float angle;
+		rotation.ToAngleAxis(out angle, out axis);
+
+		Matrix4x4 result = _GetRotationMatrix(axis, angle);
+			
 		return result;
 	}
 }

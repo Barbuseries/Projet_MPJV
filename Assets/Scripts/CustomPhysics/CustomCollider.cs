@@ -47,13 +47,13 @@ public abstract class CustomCollider : MonoBehaviour{
 		_gameWorld.RemoveCollider(this);
 	}
 
-	// TODO: A lot of code is reused (get rigid body, get transform)
-	// Maybe make a resolve collision take those parameters (instead
-	// of just colliders, we do not care about them anymore anyway).
-	// TODO: Add shape inertia as parameter to handle collisions with
-	// rotation.
 	protected static void ResolveCollision(CustomCollider c1, CustomCollider c2, Vector3 contactNormal, float penetration) {
 		CreateCollisionForce(c1, c2, contactNormal);
+		HandlePenetration(c1, c2, contactNormal, penetration);
+	}
+
+	protected static void ResolveCollision(CustomCollider c1, CustomCollider c2, Vector3 contactNormal, Vector3 contactPoint, float penetration) {
+		CreateCollisionForce(c1, c2, contactNormal, contactPoint);
 		HandlePenetration(c1, c2, contactNormal, penetration);
 	}
 
@@ -75,6 +75,53 @@ public abstract class CustomCollider : MonoBehaviour{
 
 		t1.position -= moveIPerMass * invM1;
 		t2.position += moveIPerMass * invM2;
+	}
+
+	private static Vector3 _Bi(Vector3 contactNormal, Vector3 relContact, Matrix4x4 invInertia) {
+		Vector3 result = Vector3.Cross(invInertia.MultiplyVector(Vector3.Cross(relContact, contactNormal)),
+									   relContact);
+		return result;
+	}
+
+	// FIXME: This does not work!
+	public static void CreateCollisionForce(CustomCollider c1, CustomCollider c2, Vector3 contactNormal, Vector3 contactPoint) {
+		CustomRigidBody r1 = c1.GetComponent<CustomRigidBody>();
+		CustomRigidBody r2 = c2.GetComponent<CustomRigidBody>();
+
+		CustomTransform t1 = r1.GetComponent<CustomTransform>();
+		CustomTransform t2 = r2.GetComponent<CustomTransform>();
+		
+		Vector3 relContact1 = t1.InvertTransform(contactPoint);
+		Vector3 relContact2 = t1.InvertTransform(contactPoint);
+			
+		float invM1 = 1 / r1.mass;
+		float invM2 = 1 / r2.mass;
+
+		Matrix4x4 rotation1 = t1.GetRotationMatrix();
+		Matrix4x4 rotation2 = t2.GetRotationMatrix();
+		
+		Matrix4x4 invInertia1 = rotation1.inverse * r1.shape.inertia.inverse * rotation1;
+		Matrix4x4 invInertia2 = rotation2.inverse * r2.shape.inertia.inverse * rotation2;
+		
+		Vector3 v1Contact = r1.velocity + Vector3.Cross(r1.angularVelocity, relContact1);
+		Vector3 v2Contact = r2.velocity + Vector3.Cross(r2.angularVelocity, relContact2);
+
+		Vector3 vRel = v1Contact - v2Contact;
+
+		// FIXME: What do we decide to do? (as c1 collides with c2, we
+		// currently use c1's restauration factor).
+		var num = ((c1.restauration + 1) * Vector3.Dot(vRel, contactNormal)); // evil math equation level hacking
+		var denum = Vector3.Dot(((invM1 + invM2) * contactNormal +
+								 _Bi(contactNormal, relContact1, invInertia1) +
+								 _Bi(contactNormal, relContact2, invInertia2)),
+								contactNormal); // wtf ?
+		Vector3 K = contactNormal * (num / denum);
+
+		r1.velocity -= K * invM1;
+		r2.velocity += K * invM2;
+
+		r1.angularVelocity -= invInertia1.MultiplyVector(Vector3.Cross(relContact1, K));
+		r2.angularVelocity += invInertia2.MultiplyVector(Vector3.Cross(relContact2, K));
 	}
 
 	public static void CreateCollisionForce(CustomCollider c1, CustomCollider c2, Vector3 contactNormal){
@@ -101,11 +148,15 @@ public abstract class CustomCollider : MonoBehaviour{
 		Vector3 s2Pos = s2.GetComponent<CustomTransform>().position;
 		
 		float radiusSum = s1.radius + s2.radius;
-		float d = Vector3.Distance (s1Pos, s2Pos);
+		Vector3 midLine = (s1Pos - s2Pos);
+		float d = midLine.magnitude;
 
 		//object collide
-		if (d < radiusSum) {
-			ResolveCollision(s1, s2, (s1Pos - s2Pos).normalized, (radiusSum - d));
+		if ((d > 0) && d < radiusSum) {
+			Vector3 contactNormal = midLine / d;
+			float penetration = (radiusSum - d);
+			ResolveCollision(s1, s2, contactNormal, penetration);
+			// ResolveCollision(s1, s2, contactNormal, s1Pos + midLine / 2.0f, penetration);
 		}
 	}
 
@@ -142,6 +193,7 @@ public abstract class CustomCollider : MonoBehaviour{
 		
 		float penetration = radius - Mathf.Sqrt(dist);
 		ResolveCollision(b1, s1, contactNormal, penetration);
+		// ResolveCollision(b1, s1, contactNormal, b1Point, penetration);
 	}
 
 	// NOTE: This does not handle rotations.

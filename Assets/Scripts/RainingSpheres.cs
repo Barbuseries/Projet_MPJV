@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(CustomTransform))]
 public class RainingSpheres : MonoBehaviour {
 	public CustomTransform obj;
+	public CustomTransform obj2;
 	
 	public float rate = 1f;
 
@@ -22,8 +23,11 @@ public class RainingSpheres : MonoBehaviour {
 
 	IEnumerator SpawnWave() {
 		for (;;) {
-			if (Input.GetMouseButton(0)) {
-				CustomTransform newObject = Instantiate(obj);
+			bool leftButton = Input.GetMouseButton(0);
+			bool rightButton = Input.GetMouseButton(1);
+			
+			if (leftButton || rightButton) {
+				CustomTransform newObject = leftButton ? Instantiate(obj) : Instantiate(obj2);
 				CustomCollider newCollider = newObject.gameObject.AddComponent<CustomSphereCollider>();
 				Vector3 spawnPos = Utils.ScreenToWorld(Input.mousePosition);
 				

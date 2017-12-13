@@ -249,7 +249,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cb8d709199db384ea5226914b69a670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obj: {fileID: 1620478838}
+  obj: {fileID: 114114566652820268, guid: 3aeb513afd6e70d48a2ac99670570a13, type: 2}
+  obj2: {fileID: 114621970895678846, guid: 02a832e41175ae74bb6c6378ca653fbe, type: 2}
   rate: 30
 --- !u!114 &77234740
 MonoBehaviour:
@@ -548,7 +549,7 @@ Prefab:
     - target: {fileID: 114805448607138586, guid: 3aeb513afd6e70d48a2ac99670570a13,
         type: 2}
       propertyPath: _mass
-      value: 0.1
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3aeb513afd6e70d48a2ac99670570a13, type: 2}
@@ -682,6 +683,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 1942586022}
   spring: 0.5
+--- !u!114 &856644200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 856644191}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26668f7d072723149b73e5bcb4b6ad3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 50
+  axis: {x: 0, y: 0, z: 1}
 --- !u!1001 &929861804
 Prefab:
   m_ObjectHideFlags: 0
@@ -920,12 +934,6 @@ MonoBehaviour:
   collideEnable: 1
   restauration: 0.5
   radius: 0.5
---- !u!114 &1620478838 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114114566652820268, guid: 3aeb513afd6e70d48a2ac99670570a13,
-    type: 2}
-  m_PrefabInternal: {fileID: 763445839}
-  m_Script: {fileID: 11500000, guid: 9bbdb66ecb20d234d90d58384d14923e, type: 3}
 --- !u!1 &1641086638
 GameObject:
   m_ObjectHideFlags: 0
