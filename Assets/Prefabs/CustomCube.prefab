@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 114621970895678846}
   - component: {fileID: 114434574338821272}
   - component: {fileID: 114907878718341358}
+  - component: {fileID: 114102010228167462}
   m_Layer: 0
   m_Name: CustomCube
   m_TagString: Untagged
@@ -631,6 +632,22 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1959003459263902}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114102010228167462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1427002687804550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07b170e847020214ab896f2270b40472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collideEnable: 1
+  restauration: 0.5
+  width: 2
+  height: 2
+  depth: 2
 --- !u!114 &114434574338821272
 MonoBehaviour:
   m_ObjectHideFlags: 1

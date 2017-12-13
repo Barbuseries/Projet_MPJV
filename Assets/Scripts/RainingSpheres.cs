@@ -29,6 +29,7 @@ public class RainingSpheres : MonoBehaviour {
 				
 				newObject.transform.SetParent(_gameWorld.transform);
 				newObject.position = spawnPos;
+				newObject.GetComponent<CustomRigidBody>().velocity = Vector3.zero;
 
 				float lifeTime = 6f;
 				Destroy(newObject.gameObject, lifeTime);

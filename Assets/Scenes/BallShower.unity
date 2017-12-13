@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cb8d709199db384ea5226914b69a670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obj: {fileID: 114114566652820268, guid: 3aeb513afd6e70d48a2ac99670570a13, type: 2}
+  obj: {fileID: 1620478838}
   rate: 30
 --- !u!114 &77234740
 MonoBehaviour:
@@ -548,7 +548,7 @@ Prefab:
     - target: {fileID: 114805448607138586, guid: 3aeb513afd6e70d48a2ac99670570a13,
         type: 2}
       propertyPath: _mass
-      value: 20
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3aeb513afd6e70d48a2ac99670570a13, type: 2}
@@ -773,7 +773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1072789255
 Transform:
   m_ObjectHideFlags: 0
@@ -898,6 +898,12 @@ MonoBehaviour:
   collideEnable: 1
   restauration: 0.5
   radius: 0.5
+--- !u!114 &1620478838 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114114566652820268, guid: 3aeb513afd6e70d48a2ac99670570a13,
+    type: 2}
+  m_PrefabInternal: {fileID: 763445839}
+  m_Script: {fileID: 11500000, guid: 9bbdb66ecb20d234d90d58384d14923e, type: 3}
 --- !u!1 &1641086638
 GameObject:
   m_ObjectHideFlags: 0
