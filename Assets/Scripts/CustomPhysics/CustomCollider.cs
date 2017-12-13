@@ -32,10 +32,13 @@ public abstract class CustomCollider : MonoBehaviour{
 	public void updateCloseColliderList(){
 		CustomGameWorld gameWorld = GetComponentInParent<CustomGameWorld>();
 		_closeColliderList = gameWorld.getColliderList ();
+		//fixedUpdate launch before start ?
+		selfBody = GetComponent<CustomRigidBody>();
+		selfTransform = GetComponent<CustomTransform>();
 	}
 
 	public abstract void isCollidingWithSphere(CustomSphereCollider s);
-	public abstract void isCollidingWithBox();
+	public abstract void isCollidingWithBox(CustomBoxCollider b);
 
 	// TODO: Add shape inertia as parameter to handle collisions with
 	// rotation.
