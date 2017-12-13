@@ -21,9 +21,13 @@ public class CustomSphereCollider : CustomCollider  {
 				foreach (CustomCollider currentCollider in _closeColliderList) {
 					//should not test itself
 					if (this._id != currentCollider.getId ()) {
-						if (currentCollider is CustomSphereCollider) {
+						if (currentCollider.GetType () == typeof(CustomSphereCollider)/*currentCollider is CustomSphereCollider*/) {//"is" doesn't seems to work with me
 							isCollidingWithSphere ((CustomSphereCollider)currentCollider);
-						} else {
+						}
+						else if(currentCollider.GetType () == typeof(CustomBoxCollider)/*currentCollider is CustomBoxCollider*/){
+							isCollidingWithBox((CustomBoxCollider)currentCollider);
+						}
+						else {
 							Debug.LogError ("Unknow collider");
 							return;
 						}
@@ -47,6 +51,46 @@ public class CustomSphereCollider : CustomCollider  {
 	}
 
 	//sphere to box collide
-	public override void isCollidingWithBox(){
+	public override void isCollidingWithBox(CustomBoxCollider box){
+		
+		Vector3 spherePos = this.GetComponent<CustomTransform>().position;
+		Vector3 boxPos = box.GetComponent<CustomTransform>().position;
+		// Get the center of the sphere relative to the center of the box
+		Vector3 sphereCenterRelBox = spherePos - boxPos;
+		Vector3 boxPoint =new Vector3();
+
+		//check sphere pos with the box on the X axis
+		if (sphereCenterRelBox.x < -box.width/2.0f)
+			boxPoint.x = -box.width/2.0f;
+		else if (sphereCenterRelBox.x > box.width/2.0f)
+			boxPoint.x = box.width/2.0f;
+		else
+			boxPoint.x = sphereCenterRelBox.x;
+
+		//same for Y
+		if (sphereCenterRelBox.y < -box.height / 2.0f)
+			boxPoint.y = -box.width / 2.0f;
+		else if (sphereCenterRelBox.y > box.height / 2.0f)
+			boxPoint.y = box.height/2.0f;
+		else
+			boxPoint.y = sphereCenterRelBox.y;
+
+		//same for Z
+		if (sphereCenterRelBox.z < -box.depth/2.0f)
+			boxPoint.x = -box.depth/2.0f;
+		else if (sphereCenterRelBox.z > box.depth/2.0f)
+			boxPoint.z = box.depth/2.0f;
+		else
+			boxPoint.z = sphereCenterRelBox.z;
+
+		// Now we have the closest point on the box, to the sphere
+		// So we check if it's less than the radius
+
+		float distBetweenSphereAndBox = (sphereCenterRelBox - boxPoint).magnitude;
+
+		if (distBetweenSphereAndBox < radius) {
+			Debug.Log (distBetweenSphereAndBox);
+			ResolveCollision (box, radius -distBetweenSphereAndBox);
+		}
 	}
 }
