@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class CustomCollider : MonoBehaviour{
 	
 	protected Shape _colliderShape;
-	protected CustomCollider[] _closeColliderList;// get every collider for now
 	protected CustomGameWorld _gameWorld;
 
 	protected CustomRigidBody selfBody;
@@ -19,6 +18,8 @@ public abstract class CustomCollider : MonoBehaviour{
 	public void Start(){
 		selfBody = GetComponent<CustomRigidBody>();
 		selfTransform = GetComponent<CustomTransform>();
+
+		_gameWorld = GetComponentInParent<CustomGameWorld>();
 	}
 	
 	public void setId(int id){
@@ -29,9 +30,8 @@ public abstract class CustomCollider : MonoBehaviour{
 		return _id;
 	}
 
-	public void updateCloseColliderList(){
-		CustomGameWorld gameWorld = GetComponentInParent<CustomGameWorld>();
-		_closeColliderList = gameWorld.getColliderList ();
+	void OnDestroy() {
+		_gameWorld.RemoveCollider(this);
 	}
 
 	public abstract void isCollidingWithSphere(CustomSphereCollider s);

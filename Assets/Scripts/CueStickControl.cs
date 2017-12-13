@@ -26,11 +26,8 @@ public class CueStickControl : MonoBehaviour {
 		
 		if (leftButton) {
 			_spring.enabled = false;
-			
-			Vector3 mousePos = Input.mousePosition;
-			mousePos.z = Camera.main.transform.position.y;
-		
-			Vector3 dragPos = Camera.main.ScreenToWorldPoint(mousePos);
+
+			Vector3 dragPos = Utils.ScreenToWorld(Input.mousePosition);
 			Vector3 deltaPos = (dragPos - _connectedTransform.position);
 			
 			if (deltaPos.magnitude > maxDistance) {

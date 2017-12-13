@@ -13,25 +13,23 @@ public class CustomSphereCollider : CustomCollider  {
 	private Vector3 position;
 
 	public void FixedUpdate(){
-		if (_closeColliderList == null) //if the start of gameWorld did not end
-			updateCloseColliderList ();
-		else {
-			//update collider only if component is moving
-			if (selfBody.velocity.magnitude != 0) {
-				foreach (CustomCollider currentCollider in _closeColliderList) {
-					//should not test itself
-					if (this._id != currentCollider.getId ()) {
+		var closeColliderList = _gameWorld.getColliderList();
+		
+		//update collider only if component is moving
+		if (selfBody.velocity.magnitude != 0) {
+			foreach (CustomCollider currentCollider in closeColliderList) {
+				//should not test itself
+				if (this._id != currentCollider.getId ()) {
 						if (currentCollider is CustomSphereCollider) {
 							isCollidingWithSphere ((CustomSphereCollider)currentCollider);
 						} else {
 							Debug.LogError ("Unknow collider");
 							return;
 						}
-					}
 				}
-			}
+				}
 		}
-	}		
+	}
 
 	//sphere to sphere collide
 	public override void isCollidingWithSphere(CustomSphereCollider tested){

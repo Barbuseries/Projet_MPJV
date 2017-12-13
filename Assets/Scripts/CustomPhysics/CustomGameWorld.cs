@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CustomGameWorld : MonoBehaviour {
 
-	private CustomCollider[] _colliderList; // should be something more avanced than a simple list
+	private List<CustomCollider> _colliderList; // should be something more avanced than a simple list
 
 
 	public void Start(){
@@ -15,12 +15,13 @@ public class CustomGameWorld : MonoBehaviour {
 		FetchAllColliders();
 	}
 
-	public CustomCollider[] getColliderList(){
+	public List<CustomCollider> getColliderList(){
 		return _colliderList;
 	}
 
 	private void FetchAllColliders() {
-		_colliderList = gameObject.GetComponentsInChildren<CustomCollider>();
+		_colliderList = new List<CustomCollider>(gameObject.GetComponentsInChildren<CustomCollider>());
+		
 		int id = 0;
 		foreach (CustomCollider currentCollider in _colliderList) {
 			//set an id for the collider
@@ -28,5 +29,9 @@ public class CustomGameWorld : MonoBehaviour {
 			currentCollider.setId (id);
 			id += 1;
 		}
+	}
+
+	public void RemoveCollider(CustomCollider item) {
+		_colliderList.Remove(item);
 	}
 }

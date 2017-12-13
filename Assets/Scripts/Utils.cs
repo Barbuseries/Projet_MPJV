@@ -10,4 +10,16 @@ public class Utils {
 
 		return result;
 	}
+
+	public static Vector3 ScreenToWorld(Vector3 screenPos) {
+		var result = ScreenToWorld(screenPos, Camera.main.transform.position.magnitude);
+		return result;
+	}
+
+	public static Vector3 ScreenToWorld(Vector3 screenPos, float distance) {
+		screenPos.z = Camera.main.transform.position.magnitude;
+		
+		var result = Camera.main.ScreenToWorldPoint(screenPos);
+		return result;
+	}
 }

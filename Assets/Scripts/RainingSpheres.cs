@@ -8,14 +8,12 @@ public class RainingSpheres : MonoBehaviour {
 	
 	public float rate = 1f;
 
-	private CustomTransform _customTransform;
 	private CustomGameWorld _gameWorld;
 
 	private Vector3 _originalPosition;
 	
     // Use this for initialization
     void Start () {
-        _customTransform = GetComponent<CustomTransform>();
 		_gameWorld = FindObjectOfType<CustomGameWorld>();
 		_originalPosition = new Vector3(0, 10, 0);
 		
@@ -24,15 +22,22 @@ public class RainingSpheres : MonoBehaviour {
 
 	IEnumerator SpawnWave() {
 		for (;;) {
-			CustomTransform newObject = Instantiate(obj);
-			CustomCollider newCollider = newObject.gameObject.AddComponent<CustomSphereCollider>();
+			if (Input.GetMouseButton(0)) {
+				CustomTransform newObject = Instantiate(obj);
+				CustomCollider newCollider = newObject.gameObject.AddComponent<CustomSphereCollider>();
+				Vector3 spawnPos = Utils.ScreenToWorld(Input.mousePosition);
 				
-			newObject.transform.SetParent(_gameWorld.transform);
-			newObject.position = _originalPosition + new Vector3(Random.Range(-2, 2), 0, 0);
-			Debug.Log(newObject.position);
-			Debug.Log(1.0f / rate);
+				newObject.transform.SetParent(_gameWorld.transform);
+				newObject.position = spawnPos;
 
-			yield return new WaitForSeconds(1.0f / rate);
+				float lifeTime = 6f;
+				Destroy(newObject.gameObject, lifeTime);
+
+				yield return new WaitForSeconds(1.0f / rate);
+			}
+			else {
+				yield return new WaitForSeconds(Time.deltaTime);
+			}
 		}
 	}
 }
