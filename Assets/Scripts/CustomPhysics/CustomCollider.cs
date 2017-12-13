@@ -112,46 +112,39 @@ public abstract class CustomCollider : MonoBehaviour{
 	// FIXME: This does not work correctly in Billboard scene.
 	public static void CollideSphereBox(CustomSphereCollider s1, CustomBoxCollider b1) {
 		float radius = s1.radius;
+
+		CustomTransform b1Transform = b1.GetComponent<CustomTransform>();
 		
 		Vector3 s1Pos = s1.GetComponent<CustomTransform>().position;
-		Vector3 b1Pos = b1.GetComponent<CustomTransform>().position;
-		
+		Vector3 b1Pos = b1Transform.position;
+
+		// NOTE: This works with rotations too.
 		// Get the center of the sphere relative to the center of the box
-		Vector3 relCenter = s1Pos - b1Pos;
-		
+		Vector3 relCenter = b1Transform.InvertTransform(s1Pos);
+
 		// Closest point
 		Vector3 b1Point = Vector3.zero;
 		Vector3 halfDim = b1.halfDim;
 		float dist = 0.0f;
 
-		//check sphere pos with the box on the X axis
-		dist = relCenter.x;
-		if (dist > halfDim.x) dist = halfDim.x;
-		if (dist < -halfDim.x) dist = -halfDim.x;
-		b1Point.x = dist;
-
-		//same for Y
-		dist = relCenter.y;
-		if (dist > halfDim.y) dist = halfDim.y;
-		if (dist < -halfDim.y) dist = -halfDim.y;
-		b1Point.y = dist;
-
-		//same for Z
-		dist = relCenter.z;
-		if (dist > halfDim.z) dist = halfDim.z;
-		if (dist < -halfDim.z) dist = -halfDim.z;
-		b1Point.z = dist;
-
+		// Get closes point on box to sphere
+		b1Point.x = Mathf.Clamp(relCenter.x, -halfDim.x, halfDim.x);
+		b1Point.y = Mathf.Clamp(relCenter.y, -halfDim.y, halfDim.y);
+		b1Point.z = Mathf.Clamp(relCenter.z, -halfDim.z, halfDim.z);
+				
 		// Now we have the closest point on the box, to the sphere
 		// So we check if it's less than the radius
 		dist = (b1Point - relCenter).sqrMagnitude;
 		if (dist > radius * radius) return;
+
+		b1Point = b1Transform.Transform(b1Point);
+		Vector3 contactNormal = (b1Point - s1Pos).normalized;
 		
-		b1Point += b1Pos;
 		float penetration = radius - Mathf.Sqrt(dist);
-		ResolveCollision(b1, s1, (b1Point - s1Pos).normalized, penetration);
+		ResolveCollision(b1, s1, contactNormal, penetration);
 	}
 
+	// NOTE: This does not handle rotations.
 	public static void CollideBoxBox(CustomBoxCollider b1, CustomBoxCollider b2) {
 		Vector3 b1Pos = b1.GetComponent<CustomTransform>().position;
 		Vector3 b2Pos = b2.GetComponent<CustomTransform>().position;

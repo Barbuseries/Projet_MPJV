@@ -234,4 +234,21 @@ public class CustomTransform : MonoBehaviour {
 
 		return result;
 	}
+
+	// Inverse translation and rotation.
+	// IMPORTANT: Does not work if scale is involved!
+	public Vector3 InvertTransform(Vector3 v) {
+		Vector3 axis;
+		float angle;
+		rotation.ToAngleAxis(out angle, out axis);
+
+		Vector3 result = _GetRotationMatrix(axis, -angle).MultiplyVector(v - position);
+		
+		return result;
+	}
+
+	public Vector3 Transform(Vector3 v) {
+		Vector3 result = (rotation * v) + position;
+		return result;
+	}
 }

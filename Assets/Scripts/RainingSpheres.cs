@@ -31,7 +31,7 @@ public class RainingSpheres : MonoBehaviour {
 				newObject.position = spawnPos;
 				newObject.GetComponent<CustomRigidBody>().velocity = Vector3.zero;
 
-				float lifeTime = 6f;
+				float lifeTime = 4f;
 				Destroy(newObject.gameObject, lifeTime);
 
 				yield return new WaitForSeconds(1.0f / rate);

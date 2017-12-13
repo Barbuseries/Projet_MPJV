@@ -15,6 +15,7 @@ using UnityEngine;
 //  named 'Vertices', of the gameObject.
 public abstract class CustomPrimitive : MonoBehaviour {
 	public float vertexSize = 0.2f;
+	public float lineWidth = 0.05f;
 	
 	private CustomTransform customTransform;
 	
@@ -56,7 +57,7 @@ public abstract class CustomPrimitive : MonoBehaviour {
 		if (_VAO != null) {
 			line = gameObject.AddComponent<LineRenderer>();
 
-			line.SetWidth(0.05f, 0.05f);
+			line.SetWidth(lineWidth, lineWidth);
 			line.SetVertexCount(_VAO.Length);
 		}
 	}
