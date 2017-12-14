@@ -114,7 +114,7 @@ public abstract class CustomCollider : MonoBehaviour{
 		var denum = Vector3.Dot(((invM1 + invM2) * contactNormal +
 								 _Bi(contactNormal, relContact1, invInertia1) +
 								 _Bi(contactNormal, relContact2, invInertia2)),
-								contactNormal); // wtf ?
+								contactNormal); // what the fuck ?
 		Vector3 K = contactNormal * (num / denum);
 
 		r1.velocity -= K * invM1;
