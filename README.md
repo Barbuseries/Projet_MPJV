@@ -1,7 +1,7 @@
 # Membre d'équipe
 - Edorh François (EDOF19059507)
 - Guison Vianney (GUIV30069402)
-- Klug David (XXX)
+- Klug David (KLUD13059501)
 
 
 # Implémentations
